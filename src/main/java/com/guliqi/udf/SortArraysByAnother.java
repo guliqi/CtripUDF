@@ -38,14 +38,14 @@ public class SortArraysByAnother extends GenericUDF {
     @Override
     public Object evaluate(DeferredObject[] deferredObjects) throws HiveException {
         ListObjectInspector baseListInspector = (ListObjectInspector) inputInspectors[0];
-        List baseList = baseListInspector.getList(deferredObjects[0].get());
+        List<?> baseList = baseListInspector.getList(deferredObjects[0].get());
         final ObjectInspector valInspector = baseListInspector.getListElementObjectInspector();
         final Integer[] sortIndex = IntStream.range(0, baseList.size()).boxed().toArray(Integer[]::new);
         Arrays.sort(sortIndex, (o1, o2) -> ObjectInspectorUtils.compare(baseList.get(o1), valInspector, baseList.get(o2), valInspector));
 
         ListObjectInspector sortListOI;
-        List sortList;
-        List retList;
+        List<?> sortList;
+        List<Object> retList;
         Object[] result = new Object[deferredObjects.length];
         for (int i = 0; i < deferredObjects.length; i++) {
              sortListOI = (ListObjectInspector) inputInspectors[i];
