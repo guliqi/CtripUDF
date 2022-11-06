@@ -1,6 +1,8 @@
 package com.guliqi.udf;
 
 import org.apache.hadoop.hive.ql.exec.UDF;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class UpsellFlag extends UDF {
@@ -24,11 +26,16 @@ public class UpsellFlag extends UDF {
             partiallyTrue |= isUpsell;
         }
         if (allTrue) {
-            return 2;
+            return 2; // 全部段都是升级运价
         }
         if (partiallyTrue) {
-            return 1;
+            return 1;  // 部分段是升级运价
         }
-        return 0;
+        return 0;  // 全部段都不是升级运价
+    }
+
+    public static void main(String[] args) {
+        UpsellFlag uf = new UpsellFlag();
+        System.out.println(uf.evaluate(Arrays.asList(20.), Arrays.asList(0.), Arrays.asList(24.)));
     }
 }

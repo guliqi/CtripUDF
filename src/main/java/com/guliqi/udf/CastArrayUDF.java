@@ -10,13 +10,19 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector.Category;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.primitive.JavaStringObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.StringObjectInspector;
+import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
+import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.taskdefs.Get;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -100,7 +106,7 @@ public class CastArrayUDF extends GenericUDF {
                     case TIMESTAMP:
                         //// XXX TODO
                     case BOOLEAN:
-                        return fromNum.floatValue() > 0 ? 1: 0;
+                        return fromNum.intValue() > 1? Boolean.TRUE: Boolean.FALSE;
                     case VOID:
                         return null;
                 }
@@ -167,4 +173,19 @@ public class CastArrayUDF extends GenericUDF {
         ObjectInspector returnType = ObjectInspectorFactory.getStandardListObjectInspector(PrimitiveObjectInspectorFactory.javaStringObjectInspector);
         return returnType;
     }
+
+//    public static void main(String[] args) {
+//        try {
+//            CastArrayUDF cau = new CastArrayUDF();
+//            final String type = "boolean";
+//            ObjectInspector stringOI = PrimitiveObjectInspectorFactory.getPrimitiveWritableConstantObjectInspector(TypeInfoFactory.stringTypeInfo, new Text(type));
+//            ObjectInspector listOI = ObjectInspectorFactory.getStandardListObjectInspector(PrimitiveObjectInspectorFactory.javaStringObjectInspector);
+//            ListObjectInspector resultInspector = (ListObjectInspector) cau.initialize(new ObjectInspector[]{listOI, stringOI});
+//            List<String> list = Arrays.asList("22", "99");
+//            Object result = cau.evaluate(new DeferredObject[]{new DeferredJavaObject(list), new DeferredJavaObject(type)});
+//            System.out.println(resultInspector.getList(result));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

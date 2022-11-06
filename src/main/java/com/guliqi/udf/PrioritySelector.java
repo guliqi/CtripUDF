@@ -7,7 +7,7 @@ import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;
 import org.apache.hadoop.hive.serde2.objectinspector.ListObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
-import org.apache.hadoop.hive.serde2.objectinspector.primitive.BooleanObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.primitive.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,8 @@ public class PrioritySelector extends GenericUDF {
                 throw new UDFArgumentException("PrioritySelector arguments must be array!");
             }
         }
-        if (((ListObjectInspector) objectInspectors[2]).getListElementObjectInspector() instanceof BooleanObjectInspector) {
+
+        if (!(((ListObjectInspector) objectInspectors[2]).getListElementObjectInspector() instanceof BooleanObjectInspector)) {
             throw new UDFArgumentException("The third parameter must be boolean array!");
         }
         highPriorityListInspector = (ListObjectInspector) objectInspectors[0];
