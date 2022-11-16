@@ -20,15 +20,41 @@ public class ResolveBaggageDetail extends UDF {
             String[] baggageDetailList = checkedBaggageDetailType.split("\\|");
             System.arraycopy(baggageDetailList, 0, details, 0, Math.min(details.length, baggageDetailList.length));
         }
+        List<Integer> pieces = new ArrayList<>();
+        List<Integer> weights = new ArrayList<>();
+        int maxWeight = 0;
+        int defaultWeight = 23;  // 修正 piece > 0 && weight = -1 的情况
         for (String baggageDetail: details) {
             Matcher matcher = pattern.matcher(baggageDetail.toUpperCase());
+            int piece;
+            int weight;
             if (matcher.find()) {
-                int piece = Integer.parseInt(matcher.group(1));
-                int weight = Integer.parseInt(matcher.group(2));
-                result.add(Math.max(piece, 1) * Math.max(weight, 0));
+                piece = Integer.parseInt(matcher.group(1));
+                weight = Integer.parseInt(matcher.group(2));
+                if (piece > 5) {  // 异常数据
+                    piece = 1;
+                }
             }
             else {
+                piece = 0;
+                weight = 0;
+            }
+            pieces.add(piece);
+            weights.add(weight);
+            if (weight > maxWeight) {
+                maxWeight = weight;
+                defaultWeight = maxWeight;
+            }
+        }
+        for (int i = 0; i < details.length; ++i) {
+            if (pieces.get(i) <= 0 && weights.get(i) <= 0) {
                 result.add(0);
+            } else if (pieces.get(i) <= 0) {
+                result.add(weights.get(i));
+            } else if (weights.get(i) <= 0) {
+                result.add(pieces.get(i) * defaultWeight);
+            } else {
+                result.add(pieces.get(i) * weights.get(i));
             }
         }
         return result;

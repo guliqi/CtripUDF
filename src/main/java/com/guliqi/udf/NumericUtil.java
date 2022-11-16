@@ -2,7 +2,7 @@ package com.guliqi.udf;
 
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector.PrimitiveCategory;
-import org.apache.hadoop.hive.serde2.objectinspector.primitive.DoubleObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.primitive.*;
 
 public final class NumericUtil {
 
@@ -32,9 +32,13 @@ public final class NumericUtil {
             case DOUBLE:
                 return ((DoubleObjectInspector) objInsp).get(val);
             case FLOAT:
+                return ((FloatObjectInspector) objInsp).get(val);
             case LONG:
+                return ((LongObjectInspector) objInsp).get(val);
             case INT:
+                return ((IntObjectInspector) objInsp).get(val);
             case SHORT:
+                return ((ShortObjectInspector) objInsp).get(val);
             case BYTE:
                 Number num = (Number) objInsp.getPrimitiveJavaObject(val);
                 return num.doubleValue();

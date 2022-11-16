@@ -32,6 +32,25 @@ public class RefSort extends GenericUDTF {
         return ObjectInspectorFactory.getStandardStructObjectInspector(fieldNames, fieldOIs);
     }
 
+    // zeus上有的机器会调用这个函数
+    @Override
+    public StructObjectInspector initialize(ObjectInspector[] argOIs) throws UDFArgumentException {
+        if (argOIs.length < 2) {
+            throw new UDFArgumentException("RefSort takes at least 2 arguments");
+        }
+        inputInspectors = new ListObjectInspector[argOIs.length];
+        for (int i = 0; i < argOIs.length; ++i) {
+            inputInspectors[i] = (ListObjectInspector) argOIs[i];
+        }
+        List<String> fieldNames = new ArrayList<>();
+        List<ObjectInspector> fieldOIs = new ArrayList<>();
+        for (int i = 0; i < inputInspectors.length; i++) {
+            fieldNames.add("array" + i);
+            fieldOIs.add(ObjectInspectorFactory.getStandardListObjectInspector(inputInspectors[i].getListElementObjectInspector()));
+        }
+        return ObjectInspectorFactory.getStandardStructObjectInspector(fieldNames, fieldOIs);
+    }
+
     @Override
     public void process(Object[] objects) throws HiveException {
         List<?> refList = inputInspectors[0].getList(objects[0]);
